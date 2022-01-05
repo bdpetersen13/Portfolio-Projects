@@ -1,4 +1,4 @@
-/* Uding SQL for basic Data Exploration of customer return merchandise authorizations (RMA)
+/* Using SQL for basic Data Exploration of customer return merchandise authorizations (RMA)
 The database was provided in the DAD220: Introduction to Structured Databases at SNHU
 Skills used: Create database, create/alter tables, inner join, importing data from csv file, and exporting data
 to csv file

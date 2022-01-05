@@ -15,7 +15,7 @@ USE mavenbearbuilders;
 
 -- Creating Order table to upload data on customer orders from March and April CSV files
 CREATE TABLE order_items (
-	order_item_id BIGINT,
+    order_item_id BIGINT,
     created_at DATETIME,
     order_id BIGINT, 
     price_usd DECIMAL(6,2),
@@ -35,7 +35,7 @@ SELECT MIN(created_at), MAX(created_at) FROM order_items;
 -- Creating new table for item refunds for April and uploading the data from the CSV file
 -- Note: There were no refunds in the month of March
 CREATE TABLE order_item_refunds (
-	order_item_refund_id BIGINT,
+    order_item_refund_id BIGINT,
     created_at DATETIME,
     order_item_id BIGINT,
     order_id BIGINT,
@@ -76,7 +76,7 @@ SELECT MAX(order_item_refund_id) FROM order_item_refunds;
 
 -- Creating a new product table for the launch of the second offical product and inserting the two products into the table
 CREATE TABLE products (
-	product_id BIGINT,
+    product_id BIGINT,
     created_at DATETIME,
     product_name VARCHAR(50),
     PRIMARY KEY (product_id)
@@ -159,7 +159,7 @@ SELECT COUNT(*) AS total_records FROM order_item_refunds;
 -- Creating a new table that will summerize full orders by capturing order_id, created_at, timestamp, websession_id, product_id, #_of_items, and price and cogs in USD
 -- The table will be back-populated using the records from order_items table
 CREATE TABLE orders (
-	order_id BIGINT,
+    order_id BIGINT,
     created_at DATETIME,
     website_session_id BIGINT,
     primary_product_id BIGINT,
@@ -176,10 +176,10 @@ SELECT * FROM orders;
 -- back-populating the orders table
 INSERT INTO orders
 SELECT order_id,
-	MIN(created_at) AS created_at,
+    MIN(created_at) AS created_at,
     MIN(website_session_id) AS website_session_id,
     SUM(CASE
-		WHEN is_primary_item = 1 THEN product_id
+	WHEN is_primary_item = 1 THEN product_id
         ELSE NULL
         END) AS primary_product_id,
 	COUNT(order_item_id) AS items_purchased,
@@ -199,11 +199,11 @@ AFTER INSERT ON order_items
 FOR EACH ROW
 REPLACE INTO orders
 SELECT
-	order_id,
+    order_id,
     MIN(created_at) AS created_at,
     MIN(website_session_id) AS website_session_id,
     SUM(CASE
-		WHEN is_primary_item = 1 THEN  product_id
+	WHEN is_primary_item = 1 THEN  product_id
         ELSE NULL
         END) AS primary_product_id,
 	COUNT(order_item_id) as items_purchased,
@@ -222,7 +222,7 @@ SELECT MAX(created_at) FROM orders;
 
 -- Creating a website_sessions table for tracking website sessions data
 CREATE TABLE website_sessions (
-	website_session_id BIGINT,
+    website_session_id BIGINT,
     created_at DATETIME,
     user_id BIGINT,
     is_repeat_session INT,
@@ -241,7 +241,7 @@ SELECT MAX(created_at) FROM website_sessions;
 -- Creating a view to summerize the performance during the months of January and February
 CREATE VIEW monthly_Sessions AS 
 SELECT
-	YEAR(created_at) AS year,
+    YEAR(created_at) AS year,
     MONTH(created_at) AS month,
     utm_source,
     utm_compaign,
@@ -258,7 +258,7 @@ DELIMITER // -- Delimiter change to avoid syntex error with ';'
 CREATE PROCEDURE order_performance(IN start_date DATE, IN end_date DATE)
 BEGIN
 SELECT
-	COUNT(order_id) AS total_orders,
+    COUNT(order_id) AS total_orders,
     SUM(price_usd) AS total_revenue
 FROM orders
 WHERE DATE(created_at) BETWEEN start_date AND end_date; -- Using Date to include all items that occured on 12-31
@@ -271,7 +271,7 @@ CALL order_performance('2013-11-01', '2013-12-13');
 
 -- Adding additional website data to be tracked to optomize the business performance and metrics. Only keeping the most recent two months of data stored
 CREATE TABLE website_pageviews (
-	website_pageview_id BIGINT,
+    website_pageview_id BIGINT,
     created_at DATETIME,
     website_session_id BIGINT,
     page_view_url VARCHAR(50),
@@ -303,7 +303,7 @@ SELECT MAX(created_at) FROM website_pageviews;
 
 -- Mavenbearbuilders is adding chat support to their website. Creating multiple tables to track which customers and sessions are utilizing chat, and which representative is supporting them
 CREATE TABLE users (
-	user_id BIGINT,
+    user_id BIGINT,
     created_at DATETIME,
     first_name VARCHAR(50),
     last_name VARCHAR(50),
@@ -311,7 +311,7 @@ CREATE TABLE users (
 );
 
 CREATE TABLE support_members (
-	support_member_id BIGINT,
+    support_member_id BIGINT,
     created_at DATETIME,
     frist_name VARCHAR(50),
     last_name VARCHAR(50),
@@ -319,7 +319,7 @@ CREATE TABLE support_members (
 );
 
 CREATE TABLE chat_sessions (
-	chat_session_id BIGINT,
+    chat_session_id BIGINT,
     created_at DATETIME,
     user_id BIGINT, -- NULL for support members
     support_member_id BIGINT, -- NULL for users
@@ -328,7 +328,7 @@ CREATE TABLE chat_sessions (
 );
 
 CREATE TABLE chat_messages (
-	chat_message_id BIGINT,
+    chat_message_id BIGINT,
     created_at DATETIME,
     chat_session_id BIGINT,
     user_id BIGINT, -- NULL for support members
@@ -352,7 +352,7 @@ DELIMITER // -- Delimiter change to avoid syntex error with ';'
 CREATE PROCEDURE support_member_chats (IN supmemberid BIGINT, IN start_date DATE, IN end_date DATE)
 BEGIN
 	SELECT
-		COUNT(chat_session_id) AS chats_handled
+	COUNT(chat_session_id) AS chats_handled
 	FROM chat_sessions
     WHERE DATE(created_at) BETWEEN start_date AND end_date
 		AND support_member_id = supmemberid;
@@ -366,7 +366,7 @@ CALL support_member_chats (1, '2014-01-01', '2014-01-31');
 -- Mavenbearbuilder is in talks with potential acquirers. These potential acquirers are requesting data. Views will be created for the acquirers to access
 CREATE VIEW monthly_orders_revenue AS 
 SELECT
-	YEAR(created_at) AS year,
+    YEAR(created_at) AS year,
     MONTH(created_at) AS month,
     COUNT(order_id) AS orders,
     SUM(price_USD) AS revenue
@@ -377,7 +377,7 @@ ORDER BY 1,2
 
 CREATE VIEW monthly_website_sessions AS
 SELECT
-	YEAR(created_at) AS year,
+    YEAR(created_at) AS year,
     MONTH(created_at) AS month,
     COUNT(website_session_id) AS sessions
 FROM website_sessions

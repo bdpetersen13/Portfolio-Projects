@@ -1,6 +1,7 @@
 import zlib
 import base64
 
+
 def compress(inputfile, outputfile):
     #Opening file to compress in read mode
     data = open(inputfile, 'r').read()
@@ -13,6 +14,7 @@ def compress(inputfile, outputfile):
 
     compressedFile = open(outputfile, 'w')
     compressedFile.write(dataDecoded)
+
 
 def decompress(inputfile, outputfile):
     fileContents = open(inputfile, 'r').read()
